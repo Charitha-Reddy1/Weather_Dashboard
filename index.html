@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather Dashboard</title>
+
+<style>
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: linear-gradient(to right, #4facfe, #00f2fe);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: white;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.15);
+        padding: 30px;
+        border-radius: 15px;
+        text-align: center;
+        backdrop-filter: blur(10px);
+        width: 320px;
+    }
+
+    input {
+        padding: 10px;
+        width: 70%;
+        border: none;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    button {
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        background: white;
+        color: black;
+        font-weight: bold;
+    }
+
+    .weather-info {
+        margin-top: 20px;
+    }
+
+    .temp {
+        font-size: 28px;
+        font-weight: bold;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="card">
+    <h2>🌦 Weather Dashboard</h2>
+    <input type="text" id="city" placeholder="Enter city name">
+    <br>
+    <button onclick="getWeather()">Search</button>
+
+    <div class="weather-info" id="weather"></div>
+</div>
+
+<script>
+    const apiKey = "4a1bfe9e25407e831d4009e86aa4076f"; // 🔑 Replace with your OpenWeatherMap API key
+
+    async function getWeather() {
+        const city = document.getElementById("city").value;
+        const weatherDiv = document.getElementById("weather");
+
+        if (!city) {
+            weatherDiv.innerHTML = "Please enter a city name.";
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+            );
+
+            if (!response.ok) {
+                throw new Error("City not found");
+            }
+
+            const data = await response.json();
+
+            weatherDiv.innerHTML = `
+                <h3>${data.name}, ${data.sys.country}</h3>
+                <div class="temp">${data.main.temp} °C</div>
+                <p>${data.weather[0].description}</p>
+                <p>Humidity: ${data.main.humidity}%</p>
+                <p>Wind Speed: ${data.wind.speed} m/s</p>
+            `;
+
+        } catch (error) {
+            weatherDiv.innerHTML = "City not found. Try again.";
+        }
+    }
+</script>
+
+</body>
+</html>
